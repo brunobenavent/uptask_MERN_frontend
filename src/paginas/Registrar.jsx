@@ -34,7 +34,7 @@ const Registrar = () => {
       setTimeout(() => {
         setAlerta({})
       }, 3000);
-        return
+      return
      }
      if(password.length < 6){
       setAlerta({
@@ -49,8 +49,11 @@ const Registrar = () => {
      // Hacemos la consulta a la API
      try {
         await clienteAxios.post('usuarios', { nombre, email, password })
-        setAlerta({msg: 'Creado Correctamente, revisa tu email'})
+        setAlerta({msg: 'Usuario Creado Correctamente, Revisa tu Email'})
         setDatos({})
+
+
+
      } catch (error) {
       setAlerta({
         msg: error.response.data.msg,
