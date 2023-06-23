@@ -23,7 +23,7 @@ const ConfirmarCuenta = () => {
       }
     }
     confirmarCuenta()
-  }, []);
+  }, [id]);
 
 
   return (

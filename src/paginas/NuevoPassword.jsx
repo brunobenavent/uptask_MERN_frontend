@@ -26,7 +26,7 @@ const NuevoPassword = () => {
     
     }
     comprobarToken()
-  }, []);
+  }, [token]);
 
 
 
