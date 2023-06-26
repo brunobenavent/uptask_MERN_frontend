@@ -1,41 +1,52 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Alerta from "./Alerta";
-import clienteAxios from "../config/axios";
 import useProyectos from "../hooks/useProyectos";
+import { useParams } from "react-router-dom";
 
 const FormularioProyecto = () => {
 
-    const [datos, setDatos] = useState({})
+    const [id, setId] = useState(null)
+    const [nombre, setNombre] = useState('')
+    const [descripcion, setDescripcion] = useState('')
+    const [fechaEntrega, setFechaEntrega] = useState('')
+    const [cliente, setCliente] = useState('')
 
+    const params = useParams()
 
-    const {mostrarAlerta, alerta} = useProyectos()
+    const {mostrarAlerta, alerta, submitProyecto, proyecto} = useProyectos()
 
-    const handleSubmit = async e => {
+    useEffect(() => {   
+        if(params.id && proyecto.nombre){
+            setId(proyecto._id)
+            setNombre(proyecto.nombre)
+            setDescripcion(proyecto.descripcion)
+            setFechaEntrega(proyecto.fechaEntrega.split('T')[0])
+            setCliente(proyecto.cliente)
+        }
+    }, [params.id]);
+    
+    const handleSubmit = async e => { 
         e.preventDefault()
-        const token = localStorage.getItem('token')
 
-        if(Object.values(datos).length ===0){
+
+        if([nombre, descripcion, fechaEntrega, cliente].includes('')){
             mostrarAlerta({
                 msg: "Todos los campos son obligatorios",
                 error: true
             })
+            setTimeout(() => {
+                mostrarAlerta({})
+            }, 3000);
             return
-        }
-        const config = {
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`
-            }
-        }
 
-        try {
-            const {data} = await clienteAxios.post('proyectos', config)
-            console.log(data)
-        } catch (error) {
-            mostrarAlerta({msg: error.response.data.msg, error:true})
         }
+       await submitProyecto({id, nombre, descripcion, fechaEntrega, cliente})
+       setId(null)
+       setNombre('')
+       setDescripcion('')
+       setFechaEntrega('')
+       setCliente('')
     }
-
 
   return (
     <form
@@ -50,11 +61,8 @@ const FormularioProyecto = () => {
                 className="border w-full mt-2 placeholder-gray-400 rounded-md p-2"
                 id="nombre"
                 placeholder="Nombre del Proyecto"
-                value={datos.nombre || '' }
-                onChange={ e => setDatos({
-                    ...datos,
-                    [e.target.id]: e.target.value
-                })}
+                value={nombre || '' }
+                onChange={ e => setNombre(e.target.value)}
             />
         </div>
         <div className="mb-5">
@@ -63,11 +71,8 @@ const FormularioProyecto = () => {
                 className="border w-full mt-2 placeholder-gray-400 rounded-md p-2"
                 id="descripcion"
                 placeholder="Descripción del Proyecto"
-                value={datos.descripcion || '' }
-                onChange={ e => setDatos({
-                    ...datos,
-                    [e.target.id]: e.target.value
-                })}
+                value={descripcion || '' }
+                onChange={ e => setDescripcion(e.target.value)}
             />
         </div>
         <div className="mb-5">
@@ -76,11 +81,8 @@ const FormularioProyecto = () => {
                 type="date"
                 className="border w-full mt-2 placeholder-gray-400 rounded-md p-2"
                 id="fecha-entrega"
-                value={datos.fecha || '' }
-                onChange={ e => setDatos({
-                    ...datos,
-                    [e.target.id]: e.target.value
-                })}
+                value={fechaEntrega || '' }
+                onChange={ e => setFechaEntrega(e.target.value)}
             />
         </div>
         <div className="mb-5">
@@ -90,17 +92,14 @@ const FormularioProyecto = () => {
                 className="border w-full mt-2 placeholder-gray-400 rounded-md p-2"
                 id="cliente"
                 placeholder="Nombre del Cliente"
-                value={datos.cliente || '' }
-                onChange={ e => setDatos({
-                    ...datos,
-                    [e.target.id]: e.target.value
-                })}
+                value={cliente || '' }
+                onChange={ e => setCliente(e.target.value)}
             />
         </div>
         <input
             type="submit"
             className="w-full bg-sky-600 hover:bg-sky-800 transition-colors cursor-pointer rounded text-white uppercase font-bold p-3"
-            value="Crear Proyecto"
+            value={id  ? 'Actualizar Proyecto' : "Crear Proyecto"}
         />
     </form>
   )
