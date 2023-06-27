@@ -1,7 +1,7 @@
 import { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 import clienteAxios from "../config/axios";
+import useAuth from "../hooks/useAuth";
 
 const ProyectosContext = createContext()
 // eslint-disable-next-line react/prop-types
@@ -11,9 +11,11 @@ const ProyectosProvider = ({children}) => {
     const [alerta, setAlerta] = useState({});
     const [proyecto, setProyecto] = useState({});
     const [cargando, setCargando] = useState(false);
+    const [modalFormularioTarea, setModalFormularioTarea] = useState(false);
 
     const navigate = useNavigate()
-    
+    const {auth} = useAuth()
+
     useEffect(() => {
         const obtenerProyectos = async()=>{
             const token = localStorage.getItem('token')
@@ -30,10 +32,14 @@ const ProyectosProvider = ({children}) => {
                 
             } catch (error) {
                 console.log(error)
+                mostrarAlerta({
+                    msg: error.response.data.msg,
+                    error: true
+                })
             }
         }
         obtenerProyectos()
-    }, []);
+    }, [auth]);
  
     const mostrarAlerta = alerta => setAlerta(alerta)
 
@@ -138,6 +144,32 @@ const ProyectosProvider = ({children}) => {
             console.log(error)
         }
     }
+    const handleModalTarea = () => {
+        setModalFormularioTarea(!modalFormularioTarea) 
+    }
+    const submitTarea = async (tarea) => {
+        try {
+            const token = localStorage.getItem('token')
+            if(!token) return
+            const config = {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                }
+            }
+            const {data} = await clienteAxios.post('/tareas', tarea, config)
+            console.log(data)
+
+        
+            // mostrarAlerta({msg:data.msg})
+            // setTimeout(() => {
+            //     mostrarAlerta({})
+            //     navigate('/proyectos')
+            // }, 3000);
+        } catch (error) {
+            console.log(error)
+        } 
+    }
 
     return (
         <ProyectosContext.Provider
@@ -149,7 +181,10 @@ const ProyectosProvider = ({children}) => {
                 obtenerProyecto,
                 proyecto,
                 cargando,
-                eliminarProyecto
+                eliminarProyecto,
+                modalFormularioTarea,
+                handleModalTarea,
+                submitTarea
             }}
         >
          {children}   
