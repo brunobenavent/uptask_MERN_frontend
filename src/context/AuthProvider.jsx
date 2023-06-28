@@ -1,6 +1,5 @@
 import { createContext, useEffect, useState } from "react";
-import clienteAxios from "../config/axios";
-import { useNavigate } from "react-router-dom";
+import clienteAxios from "../config/axios"
 
 const AuthContext = createContext()
 // eslint-disable-next-line react/prop-types
@@ -8,8 +7,6 @@ const AuthProvider = ({children}) => {
 
     const [auth, setAuth] = useState({});
     const [cargando, setCargando] = useState(true);
-
-    const navigate = useNavigate()
 
     useEffect(() => {
         const autenticarUsuario = async() => { 
@@ -27,7 +24,6 @@ const AuthProvider = ({children}) => {
             try {   
                 const {data} = await clienteAxios('/usuarios/perfil', config)
                 setAuth(data)
-                navigate('/proyectos')
             } catch (error) {
                 console.log(error)
                 setAuth({})

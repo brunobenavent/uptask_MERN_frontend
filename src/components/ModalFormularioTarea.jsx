@@ -1,22 +1,22 @@
-import { Fragment, useState, useEffect } from 'react'
+import { Fragment, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import useProyectos from '../hooks/useProyectos'
 import Alerta from './Alerta'
-import { useParams } from 'react-router-dom'
+import {useParams } from 'react-router-dom'
 
 const PRIORIDAD = ['Alta', 'Media', 'Baja']
 
 const ModalFormularioTarea = () => {
+    const { modalFormularioTarea, handleModalTarea, mostrarAlerta, alerta, submitTarea, setModalFormularioTarea } = useProyectos()
     
     const [nombre, setNombre] = useState('');
     const [descripcion, setDescripcion] = useState('');
     const [fechaEntrega, setFechaEntrega] = useState('');
     const [prioridad, setPrioridad] = useState('');
 
-    const { modalFormularioTarea, handleModalTarea, mostrarAlerta, alerta, submitTarea } = useProyectos()
 
     const {id: proyecto} = useParams()
-    
+
     const handleSubmit = async e => {
         e.preventDefault()
         if([nombre, descripcion, fechaEntrega, prioridad].includes('')){
@@ -30,9 +30,13 @@ const ModalFormularioTarea = () => {
             return
         }
         
-        await submitTarea({nombre, descripcion, fechaEntrega, prioridad, proyecto })
-
-        
+            await submitTarea({nombre, descripcion, fechaEntrega, prioridad, proyecto })
+            setNombre('')
+            setDescripcion('')
+            setFechaEntrega('')
+            setPrioridad('')
+            
+            
     }
 
     return (

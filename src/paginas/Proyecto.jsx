@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom"
 import useProyectos from "../hooks/useProyectos"
 import Spinner from "../components/Spinner"
 import ModalFormularioTarea from "../components/ModalFormularioTarea"
+import Tarea from "../components/Tarea"
 
 const Proyecto = () => {
   const {id} = useParams()
@@ -13,7 +14,6 @@ const Proyecto = () => {
     obtenerProyecto(id)
   }, []);
   const {nombre} = proyecto
-
   return (
        cargando ? <div className="block text-center"><Spinner/></div> :(
         <>
@@ -37,6 +37,13 @@ const Proyecto = () => {
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
         Nueva Tarea</button>
+
+        <p className="font-bold text-xl mt-10">Tareas del Proyecto</p>
+        <div className="bg-white shadow mt-10 rounded-lg">
+          {proyecto.tareas?.length ? proyecto.tareas.map( tarea => <Tarea key={tarea._id} tarea={tarea}/>) : 
+            <p className="text-center my-5 p-10">No hay tareas en este proyecto</p>
+          }
+        </div>
         <ModalFormularioTarea/>
       </>
     )
