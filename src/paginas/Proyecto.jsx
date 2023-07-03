@@ -4,13 +4,18 @@ import useProyectos from "../hooks/useProyectos"
 import Spinner from "../components/Spinner"
 import ModalFormularioTarea from "../components/ModalFormularioTarea"
 import Tarea from "../components/Tarea"
+import ModalEliminarTarea from "../components/ModalEliminarTarea"
+import Alerta from "../components/Alerta"
+import Colaborador from "../components/Colaborador"
+import ModalEliminarColaborador from "../components/ModalEliminarColaborador"
 
 const Proyecto = () => {
   const {id} = useParams()
 
-  const {obtenerProyecto, proyecto, cargando, handleModalTarea} = useProyectos()
+  const {obtenerProyecto, proyecto, cargando, handleModalTarea, alerta} = useProyectos()
 
   useEffect(() => {
+    console.log(proyecto)
     obtenerProyecto(id)
   }, []);
   const {nombre} = proyecto
@@ -39,12 +44,28 @@ const Proyecto = () => {
         Nueva Tarea</button>
 
         <p className="font-bold text-xl mt-10">Tareas del Proyecto</p>
+        {alerta.msg && <Alerta alerta={alerta}/>}
         <div className="bg-white shadow mt-10 rounded-lg">
           {proyecto.tareas?.length ? proyecto.tareas.map( tarea => <Tarea key={tarea._id} tarea={tarea}/>) : 
             <p className="text-center my-5 p-10">No hay tareas en este proyecto</p>
           }
         </div>
+        <div className="flex items-center justify-between mt-10">
+          <p className="font-bold text-xl">Colaboradores</p>
+          <Link
+            to={`/proyectos/nuevo-colaborador/${proyecto._id}`}
+            className="uppercase text-gray-400 hover:text-black font-bold"
+          >Añadir</Link>
+        </div>
+        <div className="bg-white shadow mt-10 rounded-lg">
+          {proyecto.colaboradores?.length ? proyecto.colaboradores.map( colaborador => <Colaborador key={colaborador.uid} colaborador={colaborador}/>) : 
+            <p className="text-center my-5 p-10">No hay Colaboradores en este proyecto</p>
+          }
+        </div>
+        
         <ModalFormularioTarea/>
+        <ModalEliminarTarea/>
+        <ModalEliminarColaborador/>
       </>
     )
   )
