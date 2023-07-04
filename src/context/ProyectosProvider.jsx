@@ -290,13 +290,15 @@ const ProyectosProvider = ({children}) => {
             
             mostrarAlerta({msg: data.msg})
             setColaborador({})
-            mostrarAlerta({})
+            setTimeout(() => {
+                setAlerta({})
+            }, 3000);
         } catch (error) {
             mostrarAlerta({msg: error.response.data.msg, error: true})
             
             setTimeout(() => {
                 mostrarAlerta({})
-            }, 2000);
+            }, 3000);
         }
     }
 
@@ -315,11 +317,20 @@ const ProyectosProvider = ({children}) => {
                     Authorization: `Bearer ${token}`
                 }
             }
-            const {data} = await clienteAxios.post(`/proyectos/eliminar-colaborador/${proyecto._id}`, {id: colaborador._id}, config)
-            
-            mostrarAlerta({msg: data.msg})
+            const {data} = await clienteAxios.post(`/proyectos/eliminar-colaborador/${proyecto._id}`, {id: colaborador.uid}, config)
+            const proyectoActualizado = {...proyecto}
+            proyectoActualizado.colaboradores = proyecto.colaboradores.filter(colaboradorState => colaboradorState.uid !== colaborador.uid)
+            setProyecto(proyectoActualizado)
+            setAlerta({
+                msg: data.msg
+            })
             setColaborador({})
-            mostrarAlerta({})
+            setModalEliminarColaborador(false)
+
+            setTimeout(() => {
+                setAlerta({})
+            }, 3000);
+
         } catch (error) {
             mostrarAlerta({msg: error.response.data.msg, error: true})
             
