@@ -117,6 +117,7 @@ const ProyectosProvider = ({children}) => {
          try {
             const {data} = await clienteAxios(`/proyectos/${id}`, config)
             setProyecto(data)
+            setAlerta({})
             
          } catch (error) {
             setAlerta({
@@ -339,6 +340,9 @@ const ProyectosProvider = ({children}) => {
             }, 2000);
         }
     }
+    const completarTarea = async id => {
+        console.log(id) 
+    }
 
     return (
         <ProyectosContext.Provider
@@ -365,7 +369,8 @@ const ProyectosProvider = ({children}) => {
                 agregarColaborador,
                 handleModalEliminarColaborador,
                 modalEliminarColaborador,
-                eliminarColaborador
+                eliminarColaborador,
+                completarTarea
             }}
         >
          {children}   
