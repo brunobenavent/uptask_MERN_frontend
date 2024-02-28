@@ -341,7 +341,21 @@ const ProyectosProvider = ({children}) => {
         }
     }
     const completarTarea = async id => {
-        console.log(id) 
+        try {
+            const token = localStorage.getItem('token')
+            if(!token) return
+            const config = {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                }
+            }
+            const {data} = await clienteAxios.post(`/tareas/estado/${id}`, {}, config)
+            console.log(data)
+        } catch (error) {
+            console.log(error.response)
+            
+        }
     }
 
     return (
